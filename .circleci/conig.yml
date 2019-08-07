@@ -1,0 +1,53 @@
+# Javascript Node CircleCI 2.1 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+# NOTE version 2.1 should be used in order to support used orbs 
+#
+version: 2.1
+
+# TODO add the orb to handle AWS deployment ? aws-ecs?
+orbs:
+  slack: circleci/slack@3.3.0
+  circle-compare-url: iynere/compare-url@1.1.0
+
+# TODO We can create our oun image to speed up builds
+# https://circleci.com/docs/2.0/private-images/
+# Here I use image from https://hub.docker.com/r/circleci/node/, with an appropriate docker version
+
+executors:
+  executor1:
+    docker:
+      - image: chakracore-10.13.0-browsers-legacy 
+
+# TODO use executor1
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:7.10
+
+
+    working_directory: ~/repo
+
+    steps:
+      # pre-defined command, reserved word
+      - checkout
+# TODO configure cache
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run: yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+# TODO Detect of rilter branch (maybe filter jobs in workflow)
+# TODO Implement all the steps which we have in Jenkins plus approval step and slack notifications 
+
+# TODO create workflows, 1
