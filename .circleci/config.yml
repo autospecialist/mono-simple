@@ -1,8 +1,8 @@
 # NOTE version 2.1 should be used in order to support used orbs 
-#
 version: 2.1
 
-# TODO add the orb to handle AWS deployment ? aws-ecs?
+# TODO add the orb to handle AWS deployment ? aws-ecs? 
+# TODO try to use sh instead of compare-url orb
 orbs:
   slack: circleci/slack@3.3.0
   circle-compare-url: iynere/compare-url@1.1.0
