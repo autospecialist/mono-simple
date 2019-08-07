@@ -14,6 +14,7 @@ orbs:
 # TODO We can create our oun image to speed up builds
 # https://circleci.com/docs/2.0/private-images/
 # Here I use image from https://hub.docker.com/r/circleci/node/, with an appropriate docker version
+# Use circleci/node:10.13.0-jessie for the version without browsers installed
 
 executors:
   executor1:
@@ -54,10 +55,17 @@ jobs:
     executor: executor1
     steps:
       - checkout
+      - circle-compare-url/reconstruct
       - run: 
           name: Detecting changed sub-repositories to trigger builds
           command: |
             echo -e "Detecting changed sub-repositories to trigger builds\n"
+            
+            # save value stored in file to a local env var
+            CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
+            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+            echo "Commit range: $COMMIT_RANGE"
+            
   # build:
   #   working_directory: ~/repo
 
