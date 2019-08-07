@@ -7,6 +7,10 @@ orbs:
   slack: circleci/slack@3.3.0
   circle-compare-url: iynere/compare-url@1.1.0
 
+# Note: CircleCI occasionally makes scheduled changes to images to fix bugs or otherwise improve functionality, 
+# and these changes can sometimes cause affect how images work in CircleCI jobs. 
+# Please follow the convenience-images tag on Discuss to be notified in advance of scheduled maintenance.
+
 # TODO We can create our oun image to speed up builds
 # https://circleci.com/docs/2.0/private-images/
 # Here I use image from https://hub.docker.com/r/circleci/node/, with an appropriate docker version
@@ -14,7 +18,7 @@ orbs:
 executors:
   executor1:
     docker:
-      - image: chakracore-10.13.0-browsers-legacy
+      - image: circleci/node:10.13.0-jessie-browsers
 
 workflows:
   version: 2
