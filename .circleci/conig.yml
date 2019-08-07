@@ -1,7 +1,5 @@
 # Javascript Node CircleCI 2.1 configuration file
 #
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 # NOTE version 2.1 should be used in order to support used orbs 
 #
 version: 2.1
@@ -18,36 +16,66 @@ orbs:
 executors:
   executor1:
     docker:
-      - image: chakracore-10.13.0-browsers-legacy 
+      - image: chakracore-10.13.0-browsers-legacy
 
-# TODO use executor1
+workflows:
+  version: 2
+  main:
+    jobs:
+      - detect
+      # - build
+
+      # - dev-release:
+      #     context: app-publishing
+      #     requires:
+      #       - lint
+      #       - build
+
+      # - trigger-downstream:
+      #     context: orb-publishing
+      #     requires:
+      #       - dev-release
+      #     filters:
+      #       branches:
+      #         only: master
+
+      # - hold:
+      #     type: approval
+      #     requires:
+      #       - trigger-downstream
+      #     filters:
+      #       branches:
+      #         only: master
+
 jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:7.10
-
-
-    working_directory: ~/repo
-
+  detect:
+    executor: executor1
     steps:
-      # pre-defined command, reserved word
       - checkout
-# TODO configure cache
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      - run: 
+          name: Detecting changed sub-repositories to trigger builds
+          command: |
+            echo -e "Detecting changed sub-repositories to trigger builds\n"
+  # build:
+  #   working_directory: ~/repo
 
-      - run: yarn install
+  #   steps:
+  #     # pre-defined command, reserved word
+  #     - checkout
+  #     # TODO configure cache
+  #     # Download and cache dependencies ? 
+  #     # TODO we should handle app-specific package.json
+  #     - restore_cache:
+  #         keys:
+  #           - v1-dependencies-{{ checksum "package.json" }}
+  #           # fallback to using the latest cache if no exact match is found
+  #           - v1-dependencies-
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+  #     - run: yarn install
+
+  #     - save_cache:
+  #         paths:
+  #           - node_modules
+  #         key: v1-dependencies-{{ checksum "package.json" }}
 # TODO Detect of rilter branch (maybe filter jobs in workflow)
 # TODO Implement all the steps which we have in Jenkins plus approval step and slack notifications 
-
-# TODO create workflows, 1
