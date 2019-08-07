@@ -64,8 +64,9 @@ jobs:
             # save value stored in file to a local env var
             CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
             COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo "Commit range: $COMMIT_RANGE"
-            
+            echo -e "Commit range: $COMMIT_RANGE"
+            echo -e "Branch: $CIRCLE_BRANCH"
+
   # build:
   #   working_directory: ~/repo
 
