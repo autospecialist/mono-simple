@@ -115,12 +115,12 @@ jobs:
 # Documentation page for workflows: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   version: 2
-  masterflow:
+  detect-and-persist:
     jobs:
-      - detect:
+      - build:
           filters:
             branches:
-              only: master
+              only: /master/
       # - build
 
       # - dev-release:
