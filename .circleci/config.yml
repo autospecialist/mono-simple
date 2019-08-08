@@ -69,7 +69,7 @@ jobs:
             for COMMON in common/*/; 
               do
                 commonname=$(basename $COMMON)
-                if [[ $(git diff $COMMIT_RANGE --name-status | grep "$commonname") ]]; then
+                if [[ $(git diff $COMMIT_RANGE --name-status | grep "foo") ]]; then
                   echo "Detected changed ${commonname}"
                    # TODO persist the flag to force building and deploy all the apps, to use it across workspace 
                 else
