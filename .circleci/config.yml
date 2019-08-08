@@ -21,21 +21,34 @@ executors:
     docker:
       - image: circleci/node:10.13.0-jessie-browsers
 
+# Use it to run nightly builds for master branch - now we update prod every morning, should we do the same or use approval step as well or as alternative?
+    # nightly:
+    #    triggers:
+    #        - schedule:
+    #            cron: "0 22 * * *"
+    #            filters:
+    #                branches:
+    #                    only:
+    #                        - master
+
 workflows:
   version: 2
   masterflow:
-    filters:
-      branches:
-        only: master
+    triggers:
+      filters:
+        branches:
+          only: master
     jobs:
       - detect
       # - build
+
   featureflow:
-    filters:
-      branches:
-        ignore: master
-    jobs:
-      - detect
+    triggers:
+      filters:
+        branches:
+          ignore: master
+      jobs:
+        - detect-feature
       # - build
 
       # - dev-release:
