@@ -23,7 +23,17 @@ executors:
 
 workflows:
   version: 2
-  main:
+  masterflow:
+    filters:
+      branches:
+        only: master
+    jobs:
+      - detect
+      # - build
+  featureflow:
+    filters:
+      branches:
+        ignore: master
     jobs:
       - detect
       # - build
@@ -58,6 +68,21 @@ jobs:
       - circle-compare-url/reconstruct
       - run: 
           name: Detecting changed sub-repositories to trigger builds
+          command: |
+            echo -e "Detecting changed sub-repositories to trigger builds\n"
+            
+            # save value stored in file to a local env var
+            CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
+            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+            echo -e "Commit range: $COMMIT_RANGE"
+            echo -e "Branch: $CIRCLE_BRANCH"
+  detect-feature:
+    executor: executor1
+    steps:
+      - checkout
+      - circle-compare-url/reconstruct
+      - run: 
+          name: Detecting changed sub-repositories to trigger builds for feature branches
           command: |
             echo -e "Detecting changed sub-repositories to trigger builds\n"
             
