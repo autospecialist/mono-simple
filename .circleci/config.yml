@@ -69,11 +69,11 @@ jobs:
             for COMMON in common/*/; 
               do
                 commonname=$(basename $COMMON)
-                if [[ $(git diff $COMMIT_RANGE --name-status | grep "foo") ]]; then
+                if [[ $(git diff $COMMIT_RANGE --name-status | grep "$commonname") ]]; then
                   echo "Detected changed ${commonname}"
                    # TODO persist the flag to force building and deploy all the apps, to use it across workspace 
                 else
-                  echo "${orbname} not modified;"
+                  echo "${commonname} not modified;"
                 fi
                 echo "------------------------------------------------------"
               done
@@ -121,21 +121,6 @@ workflows:
           filters:
             branches:
               only: /master/
-      # - build
-
-      # - dev-release:
-      #     context: app-publishing
-      #     requires:
-      #       - lint
-      #       - build
-
-      # - trigger-downstream:
-      #     context: orb-publishing
-      #     requires:
-      #       - dev-release
-      #     filters:
-      #       branches:
-      #         only: master
 
       # - hold:
       #     type: approval
