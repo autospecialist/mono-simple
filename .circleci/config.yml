@@ -117,19 +117,10 @@ workflows:
   version: 2
   masterflow:
     jobs:
-      filters:
-        branches:
-          only: master
-      - detect 
-      # - build
-
-  featureflow:
-    triggers:
-      filters:
-        branches:
-          ignore: master
-      jobs:
-        - detect-feature
+      - detect
+          filters:
+            branches:
+              only: master
       # - build
 
       # - dev-release:
