@@ -1,8 +1,9 @@
-# NOTE version 2.1 should be used in order to support used orbs 
+# Following stanza uses CircleCI 2.1 to make use of a executors, commands and orbs
 version: 2.1
 
 # TODO add the orb to handle AWS deployment ? aws-ecs? 
-# TODO try to use sh instead of compare-url orb
+# TODO try to use sh instead of compare-url orb NOTE but probably we should use the orb, it is a lot of staff to check for correct detection of changes,
+# TODO see the log of orb reconstruction!
 orbs:
   slack: circleci/slack@3.3.0
   circle-compare-url: iynere/compare-url@1.1.0
@@ -10,18 +11,98 @@ orbs:
 # Note: CircleCI occasionally makes scheduled changes to images to fix bugs or otherwise improve functionality, 
 # and these changes can sometimes cause affect how images work in CircleCI jobs. 
 # Please follow the convenience-images tag on Discuss to be notified in advance of scheduled maintenance.
-
-# TODO We can create our oun image to speed up builds
-# https://circleci.com/docs/2.0/private-images/
+# TODO We can create our oun image to speed up builds: https://circleci.com/docs/2.0/private-images/
 # Here I use image from https://hub.docker.com/r/circleci/node/, with an appropriate docker version
 # Use circleci/node:10.13.0-jessie for the version without browsers installed
+# TODO Now, gui_public-web uses 652400735483.dkr.ecr.eu-west-1.amazonaws.com/infrastructure_docker-node-alpine:10.14.1
+# TODO We can create different images for different apps and use them for different executors, see 'executors section' TODO
 
+# Using an image hosted on AWS ECR requires authentication using AWS credentials. 
+# By default, CircleCI uses the AWS credentials that you add to the Project > Settings > AWS Permissions page in the CircleCI application 
+# or by setting the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY project environment variables. 
+# It is also possible to set the credentials by using aws_auth field as in the following example:
+# Template for download our custom images from AWS:
+# jobs:
+#   build:
+#     docker:
+#       - image: account-id.dkr.ecr.us-east-1.amazonaws.com/org/repo:0.1
+#         aws_auth:
+#           aws_access_key_id: AKIAQWERVA  # can specify string literal values
+#           aws_secret_access_key: $ECR_AWS_SECRET_ACCESS_KEY  # or project UI envar reference
+
+# TODO We can create different images for different apps and use them for different executors
+# TODO NOTE we can define environment specific for every executor, see commented out code!
+# TODO Those executors can be called for app-specific jobs, we can run steps conditionally, look after 'when' in documentation
 executors:
   executor1:
+    # environment:
+    # ENV: CI
     docker:
       - image: circleci/node:10.13.0-jessie-browsers
 
-# Use it to run nightly builds for master branch - now we update prod every morning, should we do the same or use approval step as well or as alternative?
+# commands: # DRY, defines a sequence of steps as a map to be executed in a job, enabling you to reuse a single command definition across multiple jobs.
+# TODO check the file after completing of working prototype, maybe can be useful in optimization step 
+
+jobs:
+  detect:
+    executor: executor1
+  #   working_directory: ~/repo
+    steps:
+      - checkout
+      - circle-compare-url/reconstruct
+      - run: 
+          name: Detecting changed sub-repositories to trigger builds
+          command: |
+            echo -e "Detecting changed sub-repositories to trigger builds\n"
+            echo -e "Branch: $CIRCLE_BRANCH" 
+            # we can use $CIRCLE_BRANCH as trigger for branch-specific jobs, but filters used instead for whitelisting/blacklisting execution of some branches.
+            
+            # save value stored in file to a local env var
+            CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
+
+            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
+            echo -e "Commit range: $COMMIT_RANGE"
+            
+            echo -e "checking if common files changed"
+            echo "------------------------------------------------------"
+            
+            for COMMON in common/*/; 
+              do
+                commonname=$(basename $COMMON)
+                if [[ $(git diff $COMMIT_RANGE --name-status | grep "$commonname") ]]; then
+                  echo "Detected changed ${commonname}"
+                   # TODO persist the flag to force building and deploy all the apps, to use it across workspace 
+                else
+                  echo "${orbname} not modified;"
+                fi
+                echo "------------------------------------------------------"
+              done
+
+  # build:
+  #   working_directory: ~/repo
+
+  #   steps:
+  #     # pre-defined command, reserved word
+  #     - checkout
+  #     # TODO configure cache
+  #     # Download and cache dependencies ? 
+  #     # TODO we should handle app-specific package.json
+  #     - restore_cache:
+  #         keys:
+  #           - v1-dependencies-{{ checksum "package.json" }}
+  #           # fallback to using the latest cache if no exact match is found
+  #           - v1-dependencies-
+
+  #     - run: yarn install
+
+  #     - save_cache:
+  #         paths:
+  #           - node_modules
+  #         key: v1-dependencies-{{ checksum "package.json" }}
+# TODO Detect of rilter branch (maybe filter jobs in workflow)
+# TODO Implement all the steps which we have in Jenkins plus approval step and slack notifications
+# We can use it to run nightly builds for master branch - now we update prod every morning, should we do the same or use approval step as well or as alternative?
+# cron chould be edit in accordance with the AWS scheduling
     # nightly:
     #    triggers:
     #        - schedule:
@@ -30,16 +111,16 @@ executors:
     #                branches:
     #                    only:
     #                        - master
-
+#
+# Documentation page for workflows: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   version: 2
   masterflow:
-    triggers:
+    jobs:
       filters:
         branches:
           only: master
-    jobs:
-      - detect
+      - detect 
       # - build
 
   featureflow:
@@ -73,58 +154,3 @@ workflows:
       #       branches:
       #         only: master
 
-jobs:
-  detect:
-    executor: executor1
-    steps:
-      - checkout
-      - circle-compare-url/reconstruct
-      - run: 
-          name: Detecting changed sub-repositories to trigger builds
-          command: |
-            echo -e "Detecting changed sub-repositories to trigger builds\n"
-            
-            # save value stored in file to a local env var
-            CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
-            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo -e "Commit range: $COMMIT_RANGE"
-            echo -e "Branch: $CIRCLE_BRANCH"
-  detect-feature:
-    executor: executor1
-    steps:
-      - checkout
-      - circle-compare-url/reconstruct
-      - run: 
-          name: Detecting changed sub-repositories to trigger builds for feature branches
-          command: |
-            echo -e "Detecting changed sub-repositories to trigger builds\n"
-            
-            # save value stored in file to a local env var
-            CIRCLE_COMPARE_URL=$(cat CIRCLE_COMPARE_URL.txt)
-            COMMIT_RANGE=$(echo $CIRCLE_COMPARE_URL | sed 's:^.*/compare/::g')
-            echo -e "Commit range: $COMMIT_RANGE"
-            echo -e "Branch: $CIRCLE_BRANCH"
-
-  # build:
-  #   working_directory: ~/repo
-
-  #   steps:
-  #     # pre-defined command, reserved word
-  #     - checkout
-  #     # TODO configure cache
-  #     # Download and cache dependencies ? 
-  #     # TODO we should handle app-specific package.json
-  #     - restore_cache:
-  #         keys:
-  #           - v1-dependencies-{{ checksum "package.json" }}
-  #           # fallback to using the latest cache if no exact match is found
-  #           - v1-dependencies-
-
-  #     - run: yarn install
-
-  #     - save_cache:
-  #         paths:
-  #           - node_modules
-  #         key: v1-dependencies-{{ checksum "package.json" }}
-# TODO Detect of rilter branch (maybe filter jobs in workflow)
-# TODO Implement all the steps which we have in Jenkins plus approval step and slack notifications 
