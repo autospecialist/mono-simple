@@ -72,6 +72,7 @@ jobs:
                 if [[ $(git diff $COMMIT_RANGE --name-status | grep "$commonname") ]]; then
                   echo "Detected changed ${commonname}"
                    # TODO persist the flag to force building and deploy all the apps, to use it across workspace 
+                  break
                 else
                   echo "${commonname} not modified;"
                 fi
