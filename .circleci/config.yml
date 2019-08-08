@@ -117,7 +117,7 @@ workflows:
   version: 2
   masterflow:
     jobs:
-      - detect
+      - detect:
           filters:
             branches:
               only: master
