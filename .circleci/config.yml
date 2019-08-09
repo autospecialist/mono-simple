@@ -111,6 +111,7 @@ jobs:
             if [[ ${forceallbuilds} != 0 ]]; then # else, all builds are already forced
               echo -e "No changed files in the COMMON and CORE directories, checking if APPS files changed"
               echo -e "------------------------ step 3 - checking APPS directory for changed files ------------------------------"
+              changedapps=()
               for APP in apps/*/;
                 do
                   appname=$(basename $APP)
