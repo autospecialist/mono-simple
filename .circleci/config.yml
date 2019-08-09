@@ -64,7 +64,7 @@ jobs:
             echo -e "Commit range: $COMMIT_RANGE"
             
             echo -e "checking if common files changed"
-            echo "------------------------ step 1 - checking common directory ------------------------------"
+            echo -e "------------------------ step 1 - checking common directory ------------------------------"
 
             forceallbuilds=1 #false
 
