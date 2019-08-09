@@ -3,6 +3,6 @@
 ## Usage
 
 ```
-const common = require ('@monorepo/common'); it is false
+const common = require ('@monorepo/common') ; it is false
 
 ```
