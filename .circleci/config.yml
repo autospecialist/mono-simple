@@ -117,7 +117,7 @@ jobs:
                   appname=$(basename $APP)
                   if [[ $(git diff $COMMIT_RANGE --name-status | grep "$appname") ]]; then
                     echo "Detected changed files in  ${appname} directory! Adding the ${appname} application to the list..."
-                    changedapps+=${appname}
+                    changedapps+=" ${appname}"
                   else
                     echo "${appname} not modified;"
                   fi
