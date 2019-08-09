@@ -136,7 +136,7 @@ jobs:
             # List of changed apps generated, butin cas of no files changed in COMMON / CORE / APPS, it is empty
             # Check the rootfiles
             
-            if (( ${changedapps} -eq 0)); then
+            if (( ${changedapps})); then
               echo "Changedapps array is not empty"
             else
               changed_root_files=()
