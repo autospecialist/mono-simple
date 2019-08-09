@@ -86,7 +86,7 @@ jobs:
                 echo "------------------------------------------------------"
               done
 
-            if [[ ${forceallbuilds} -eq 1 0 ]]; then
+            if [[ ${forceallbuilds} -eq 0 ]]; then # else, all builds are already forced
               for CORE in core/*/; 
                 do
                   corename=$(basename $CORE)
