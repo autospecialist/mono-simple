@@ -108,10 +108,11 @@ jobs:
 
             # if no files changed in CORE and COMMON, check apps
             
+            changedapps=()
+
             if [[ ${forceallbuilds} != 0 ]]; then # else, all builds are already forced
               echo -e "No changed files in the COMMON and CORE directories, checking if APPS files changed"
               echo -e "------------------------ step 3 - checking APPS directory for changed files ------------------------------"
-              changedapps=()
               for APP in apps/*/;
                 do
                   appname=$(basename $APP)
@@ -126,6 +127,21 @@ jobs:
                   echo "Changed applications : ${changedapps}"
             else
               echo "Skipping check step for APPS, because COMMON or CORE files changed "
+              # TODO refactoring, DRY ?
+              for APP in apps/*/; do
+                  changedapps+=" ${appname}"
+              done
+            fi
+
+            # List of changed apps generated, butin cas of no files changed in COMMON / CORE / APPS, it is empty
+            # Check the rootfiles
+            
+            if (( ${changedapps} )); then
+              echo "Changedapps array is not empty"
+            else
+              echo "Root files changed, check them all"
+              # Exclude README and LICENSE, maybe more
+              echo `git diff --name-only $SHIPPABLE_COMMIT_RANGE | grep -v / | awk '{print $1}'` # can not use . as FS because .* files
             fi
 
   # build:
