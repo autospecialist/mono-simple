@@ -3,6 +3,6 @@
 ## Usage
 
 ```
-const common = require ('@monorepo/common'); lorem ipsum dolor sit
+const common = require ('@monorepo/common'); lorem ipsum dolor sit amet
 
 ```
