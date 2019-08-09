@@ -98,7 +98,7 @@ jobs:
                     # Logic : if some of files in the /core/ directory was changed, we should build all the applications
                     # TODO Advanced logic: see comments for COMMON for-loop
                   else
-                    echo "${corename} not modified;"
+                    echo "${corename} not modified, forceallbuilds == ${forceallbuilds}"
                   fi
                   echo "------------------------------------------------------"
                 done
@@ -117,7 +117,7 @@ jobs:
                   appname=$(basename $APP)
                   if [[ $(git diff $COMMIT_RANGE --name-status | grep "$appname") ]]; then
                     echo "Detected changed files in  ${appname} directory! Adding the ${appname} application to the list..."
-                    changedapps += ${appname}
+                    changedapps+=${appname}
                   else
                     echo "${appname} not modified;"
                   fi
