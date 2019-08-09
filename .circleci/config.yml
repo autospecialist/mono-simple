@@ -86,7 +86,7 @@ jobs:
                 echo "------------------------------------------------------"
               done
 
-            if [[ forceallbuilds != 0 ]]; then
+            if [[ ${forceallbuilds} != 0 ]]; then
               for CORE in core/*/; 
                 do
                   corename=$(basename $CORE)
