@@ -145,7 +145,7 @@ jobs:
               # Exclude README and LICENSE, maybe more
               # changed_root_files=`git diff --name-only $SHIPPABLE_COMMIT_RANGE | grep -v / | awk '{print $1}'` # can't use '.' as FS because .* files
 
-              changed_folders=`git diff --name-only $SHIPPABLE_COMMIT_RANGE | grep packages/ | awk 'BEGIN {FS="/"} {print $2}' | uniq`
+              # changed_folders=`git diff --name-only $SHIPPABLE_COMMIT_RANGE | grep packages/ | awk 'BEGIN {FS="/"} {print $2}' | uniq`
               # echo "changed_root_files= ${changed_root_files}"
             fi
 
