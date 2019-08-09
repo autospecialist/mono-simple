@@ -103,6 +103,8 @@ jobs:
                   fi
                   echo "------------------------------------------------------"
                 done
+            else
+              echo "Skipping check step for core, because common files changed "
             fi
 
   # build:
