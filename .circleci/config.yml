@@ -64,17 +64,38 @@ jobs:
             echo -e "Commit range: $COMMIT_RANGE"
             
             echo -e "checking if common files changed"
-            echo "------------------------------------------------------"
+            echo "------------------------ step 1 - checking common directory ------------------------------"
             
             for COMMON in common/*/; 
               do
                 commonname=$(basename $COMMON)
                 if [[ $(git diff $COMMIT_RANGE --name-status | grep "$commonname") ]]; then
-                  echo "Detected changed ${commonname}"
-                   # TODO persist the flag to force building and deploy all the apps, to use it across workspace 
+                  echo "Detected changed files in  ${commonname} directory!"
+                  # Logic : if some of files in the /common/ directory was changed, we should build all the applications
+                  # TODO Advanced logic: detect workspace names of changed common packages and check affected applications by filtering dependencies
+                  # TODO do  not skip the next steps (checking core and other root directories, another applications can be affected by them)
+                  # persist the flag to force building and deploy all the apps, to use it across workspace
+                  # TODO if advance logic will be applied - handle it another way, probably save a list of affected applications in the workspace
                   break
                 else
                   echo "${commonname} not modified;"
+                fi
+                echo "------------------------------------------------------"
+              done
+            
+            for CORE in core/*/; 
+              do
+                corename=$(basename $CORE)
+                if [[ $(git diff $COMMIT_RANGE --name-status | grep "$corename") ]]; then
+                  echo "Detected changed files in  ${corename} directory!"
+                  # Logic : if some of files in the /common/ directory was changed, we should build all the applications
+                  # TODO Advanced logic: detect workspace names of changed common packages and check affected applications by filtering dependencies
+                  # TODO do  not skip the next steps (checking core and other root directories, another applications can be affected by them)
+                  # persist the flag to force building and deploy all the apps, to use it across workspace
+                  # TODO if advance logic will be applied - handle it another way, probably save a list of affected applications in the workspace
+                  break
+                else
+                  echo "${corename} not modified;"
                 fi
                 echo "------------------------------------------------------"
               done
