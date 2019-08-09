@@ -66,7 +66,7 @@ jobs:
             echo -e "checking if common files changed"
             echo -e "------------------------ step 1 - checking common directory ------------------------------"
 
-            forceallbuilds=1 #false
+            forceallbuilds=1 #false , this global var should be our trigger to force all builds 
 
             for COMMON in common/*/; 
               do
@@ -86,7 +86,7 @@ jobs:
                 echo "------------------------------------------------------"
               done
 
-            # if [[ forceallbuilds != 0 ]]; then
+            if [[ forceallbuilds != 0 ]]; then
               for CORE in core/*/; 
                 do
                   corename=$(basename $CORE)
@@ -103,7 +103,7 @@ jobs:
                   fi
                   echo "------------------------------------------------------"
                 done
-            # fi
+            fi
 
   # build:
   #   working_directory: ~/repo
