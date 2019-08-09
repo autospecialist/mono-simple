@@ -17,4 +17,3 @@ NOTE :
 CHANGE:
 
 Lorem ipsum. Add something here or edit this text.
-
