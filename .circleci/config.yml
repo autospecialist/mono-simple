@@ -65,7 +65,9 @@ jobs:
             
             echo -e "checking if common files changed"
             echo "------------------------ step 1 - checking common directory ------------------------------"
-            forceallbuilds = 1
+
+            forceallbuilds=1 #false
+
             for COMMON in common/*/; 
               do
                 commonname=$(basename $COMMON)
@@ -84,7 +86,7 @@ jobs:
                 echo "------------------------------------------------------"
               done
 
-            if [[ forceallbuilds != 0 ]]; then
+            # if [[ forceallbuilds != 0 ]]; then
               for CORE in core/*/; 
                 do
                   corename=$(basename $CORE)
@@ -101,7 +103,7 @@ jobs:
                   fi
                   echo "------------------------------------------------------"
                 done
-            fi
+            # fi
 
   # build:
   #   working_directory: ~/repo
