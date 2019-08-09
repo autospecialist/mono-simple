@@ -64,7 +64,7 @@ jobs:
             echo -e "Commit range: $COMMIT_RANGE"
             
             echo -e "checking if common files changed"
-            echo -e "------------------------ step 1 - checking common directory ------------------------------"
+            echo -e "------------------------ step 1 - checking COMMON directory for changed files ------------------------------"
 
             forceallbuilds=1 #false , this global var should be our trigger to force all builds 
 
@@ -72,13 +72,12 @@ jobs:
               do
                 commonname=$(basename $COMMON)
                 if [[ $(git diff $COMMIT_RANGE --name-status | grep "$commonname") ]]; then
-                  echo "Changed files in  ${commonname} directory!"
+                  echo "Changed files in  ${commonname} directory! We should build all the applications..."
                   forceallbuilds=0
                   break
                   # Logic : if some of files in the /common/ directory was changed, we should build all the applications
                   # TODO Advanced logic: detect workspace names of changed common packages and check affected applications by filtering dependencies
                   # TODO do  not skip the next steps (checking core and other root directories, another applications can be affected by them)
-                  # persist the flag to force building and deploy all the apps, to use it across workspace
                   # TODO if advance logic will be applied - handle it another way, probably save a list of affected applications in the workspace
                 else
                   echo "${commonname} not modified, forceallbuilds == ${forceallbuilds}"
@@ -87,24 +86,45 @@ jobs:
               done
 
             if [[ ${forceallbuilds} != 0 ]]; then # else, all builds are already forced
-              for CORE in core/*/; 
+              echo -e "No changed files in the COMMON directory, checking if CORE files changed"
+              echo -e "------------------------ step 2 - checking CORE directory for changed files ------------------------------"
+              for CORE in core/*/;
                 do
                   corename=$(basename $CORE)
                   if [[ $(git diff $COMMIT_RANGE --name-status | grep "$corename") ]]; then
-                    echo "Detected changed files in  ${corename} directory!"
-                    # Logic : if some of files in the /common/ directory was changed, we should build all the applications
-                    # TODO Advanced logic: detect workspace names of changed common packages and check affected applications by filtering dependencies
-                    # TODO do  not skip the next steps (checking core and other root directories, another applications can be affected by them)
-                    # persist the flag to force building and deploy all the apps, to use it across workspace
-                    # TODO if advance logic will be applied - handle it another way, probably save a list of affected applications in the workspace
+                    echo "Detected changed files in  ${corename} directory! We should build all the applications..."
+                    forceallbuilds=0
                     break
+                    # Logic : if some of files in the /core/ directory was changed, we should build all the applications
+                    # TODO Advanced logic: see comments for COMMON for-loop
                   else
                     echo "${corename} not modified;"
                   fi
                   echo "------------------------------------------------------"
                 done
             else
-              echo "Skipping check step for core, because common files changed "
+              echo "Skipping check step for CORE, because COMMON files changed "
+            fi
+
+            # if no files changed in CORE and COMMON, check apps
+            
+            if [[ ${forceallbuilds} != 0 ]]; then # else, all builds are already forced
+              echo -e "No changed files in the COMMON and CORE directories, checking if APPS files changed"
+              echo -e "------------------------ step 3 - checking APPS directory for changed files ------------------------------"
+              for APP in apps/*/;
+                do
+                  appname=$(basename $APP)
+                  if [[ $(git diff $COMMIT_RANGE --name-status | grep "$appname") ]]; then
+                    echo "Detected changed files in  ${appname} directory! Adding the ${appname} application to the list..."
+                    changedapps += ${appname}
+                  else
+                    echo "${appname} not modified;"
+                  fi
+                  echo "------------------------------------------------------"
+                done
+                  echo "Changed applications : ${changedapps}"
+            else
+              echo "Skipping check step for APPS, because COMMON or CORE files changed "
             fi
 
   # build:
