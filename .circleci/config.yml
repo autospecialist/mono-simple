@@ -48,7 +48,7 @@ executors:
 jobs:
   detect:
     executor: executor1
-    working_directory: ~/repo
+    working_directory: /tmp
     steps:
       - checkout
       - circle-compare-url/reconstruct
@@ -152,6 +152,18 @@ jobs:
 
             echo -e "Changed applications : ${changedapps}"
 
+            mkdir -p workspace
+            echo ${changedapps} > workspace/changedapps
+
+            # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
+        - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          # taken to be the root directory of the workspace.
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - changedapps
+
             if [[ ${changedapps} ]]; then
               echo -e "We should test and build apps: ${changedapps}"
             else
@@ -168,14 +180,18 @@ jobs:
     
   test:
     executor: executor1
-    working_directory: ~/repo
+    working_directory: /tmp
     steps:
+      - attach_workspace:
+        # Must be absolute path or relative path from working_directory
+        at: /tmp/workspace
       # - checkout # trying to skip it because checked out at the build step
       - run:
           name: Testing only applications from application list
           command: |
             echo "------------------------------------------------------"
             echo -e "Trying to get list of applications generated via previous job"
+            changedapps = `cat /tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
     
   build-and-push:
