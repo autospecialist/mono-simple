@@ -195,7 +195,6 @@ jobs:
             changedapps=`cat ~/tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
             ls
-            cd workspace
             cd apps
             ls
 
