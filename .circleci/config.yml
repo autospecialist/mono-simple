@@ -239,9 +239,9 @@ jobs:
                 echo "-------------------Running build for $app ---------------------"
 
                 echo "building image $app"
-                sudo docker build -t $ACCOUNT_NAME/$1:$BRANCH.$SHIPPABLE_BUILD_NUMBER -f apps/$1/Dockerfile .
+                sudo docker build -t $ACCOUNT_NAME/$app:$BRANCH.$SHIPPABLE_BUILD_NUMBER -f apps/$app/Dockerfile .
                 echo "pushing image $app"
-                sudo docker push $ACCOUNT_NAME/$1:$BRANCH.$SHIPPABLE_BUILD_NUMBER
+                sudo docker push $ACCOUNT_NAME/$app:$BRANCH.$SHIPPABLE_BUILD_NUMBER
             done
       # - aws-ecr/build_and_push_image:
       #     account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
