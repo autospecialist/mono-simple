@@ -181,9 +181,9 @@ jobs:
     executor: executor1
     working_directory: ~/tmp
     steps:
-      - checkout # trying to skip it because checked out at the build step
       - attach_workspace:
           at: ~/tmp/workspace
+      - checkout # trying to skip it because checked out at the build step
       - run:
           name: Installing dependencies
           command: yarn install
@@ -297,6 +297,6 @@ workflows:
     #                        - master
 #
 # Documentation page for workflows: https://circleci.com/docs/2.0/configuration-reference/#workflows
+# TODO try to persist to workspace all files checked out from repo during detect job, to retrieve them
 
-# TODO try to persist to workspace all files checked out from repo during detect job, to retrieve them later
 
