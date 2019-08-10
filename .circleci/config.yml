@@ -181,9 +181,9 @@ jobs:
     executor: executor1
     working_directory: /tmp
     steps:
-      - attach_workspace:
-        # Must be absolute path or relative path from working_directory
-        at: /tmp/workspace
+      # - attach_workspace:
+      #   # Must be absolute path or relative path from working_directory
+      #   at: /tmp/workspace
       # - checkout # trying to skip it because checked out at the build step
       - run:
           name: Testing only applications from application list
