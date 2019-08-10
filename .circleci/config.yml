@@ -222,6 +222,8 @@ jobs:
       - checkout # TODO try to skip it because checked out at the build step
       - attach_workspace:
           at: ~/tmp/workspace
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Installing dependencies
           command: yarn install
