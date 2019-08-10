@@ -46,7 +46,7 @@ executors:
 jobs:
   detect:
     executor: executor1
-  #   working_directory: ~/repo
+    working_directory: ~/repo
     steps:
       - checkout
       - circle-compare-url/reconstruct
@@ -154,15 +154,27 @@ jobs:
               echo -e "We should test and build apps: ${changedapps}"
             else
               echo -e "We should not build any app, only LICENSE or README changed"
+              circleci step halt
+              exit 0
             fi
-
 
             # List of changed apps generated.
             # Contains all the apps if /common/ | /core/ | root changed,
             # or only names of changed packages in the /apps/
 
             # Double - check if not empty before running tests
-
+    
+  test:
+    executor: executor1
+    working_directory: ~/repo
+    steps:
+      # - checkout # trying to skip it because checked out at the build step
+      - run:
+          name: Testing only applications from application list
+          command: |
+            echo "------------------------------------------------------"
+            echo -e "Trying to get list of applications generated via previous job"
+            echo -e "Changed applications : ${changedapps}"
 
   # build:
   #   working_directory: ~/repo
@@ -185,7 +197,6 @@ jobs:
   #         paths:
   #           - node_modules
   #         key: v1-dependencies-{{ checksum "package.json" }}
-# TODO Detect of rilter branch (maybe filter jobs in workflow)
 # TODO Implement all the steps which we have in Jenkins plus approval step and slack notifications
 # We can use it to run nightly builds for master branch - now we update prod every morning, should we do the same or use approval step as well or as alternative?
 # cron chould be edit in accordance with the AWS scheduling
