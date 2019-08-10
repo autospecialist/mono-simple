@@ -208,15 +208,16 @@ jobs:
                 yarn test
                 cd ..
             done
-                  # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
+      # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs.
       - persist_to_workspace:
-          root: workspace/repo
+          root: workspace
           # Must be relative path from root
           paths:
           - ./
 
   build-and-push:
     executor: executor1
+    working_directory: ~/tmp
     steps:
       - attach_workspace:
           at: ~/tmp/workspace
@@ -227,6 +228,8 @@ jobs:
             echo -e "Trying to get list of applications generated via previous job"
             changedapps=`cat ~/tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
+
+            cd workspace
 
             # Iterate on each service and run the packaging script
             for app in $changedapps
@@ -250,8 +253,7 @@ jobs:
       #     cluster-name: '${MY_APP_PREFIX}-cluster'
       #     container-image-name-updates: 'container=${MY_APP_PREFIX}-service,tag=${CIRCLE_SHA1}'
 
-  # build:
-  #   working_directory: ~/repo
+  # TODO caching on build step ?
 
   #   steps:
   #     # pre-defined command, reserved word
