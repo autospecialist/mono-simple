@@ -225,18 +225,18 @@ workflows:
           filters:
             branches:
               only: /master/
-      - hold: # <<< A job that will require manual approval in the CircleCI web application.
-          type: approval # <<< This key-value pair will set your workflow to a status of "On Hold"
-          requires: # We only run the "hold" job when test2 has succeeded
-            - test
-          filters:
-            branches:
-              only: /master/
-          # On approval of the `hold` job, any successive job that requires the `hold` job will run. 
-          #    In this case, a user is manually triggering the   build-and-push job.
-      -  build-and-push:
+      # - hold: # <<< A job that will require manual approval in the CircleCI web application.
+      #     type: approval # <<< This key-value pair will set your workflow to a status of "On Hold"
+      #     requires: # We only run the "hold" job when test2 has succeeded
+      #       - test
+      #     filters:
+      #       branches:
+      #         only: /master/
+      #     # On approval of the `hold` job, any successive job that requires the `hold` job will run. 
+      #     #    In this case, a user is manually triggering the   build-and-push job.
+      - build-and-push:
           requires:
-            - hold
+            - test
       # - deploy:
       #     requires:
       #       - hold
