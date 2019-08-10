@@ -196,6 +196,7 @@ jobs:
             echo -e "Changed applications : ${changedapps}"
             ls
             cd workspace
+            cd apps
             ls
 
             # Iterate on each service and run the packaging script
