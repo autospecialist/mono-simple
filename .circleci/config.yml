@@ -194,8 +194,8 @@ jobs:
             echo -e "Trying to get list of applications generated via previous job"
             changedapps=`cat ~/tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
-
-            cd apps
+            ls
+            cd ~/apps
 
             # Iterate on each service and run the packaging script
             for app in $changedapps
