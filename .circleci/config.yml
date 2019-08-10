@@ -183,7 +183,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/tmp/workspace
-      # - checkout # trying to skip it because checked out at the build step
+      checkout # trying to skip it because checked out at the build step
       - run:
           name: Installing dependencies
           command: yarn install
@@ -211,6 +211,15 @@ jobs:
   build-and-push:
     executor: executor1
     steps:
+      - attach_workspace:
+          at: ~/tmp/workspace
+          - run:
+          name: Building apps from list to ECR
+          command: |
+            echo "------------------------------------------------------"
+            echo -e "Trying to get list of applications generated via previous job"
+            changedapps=`cat ~/tmp/workspace/changedapps`
+            echo -e "Changed applications : ${changedapps}"
       # - aws-ecr/build_and_push_image:
       #     account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
       #     repo: '${MY_APP_PREFIX}'
@@ -222,12 +231,6 @@ jobs:
       #     family: '${MY_APP_PREFIX}-service'
       #     cluster-name: '${MY_APP_PREFIX}-cluster'
       #     container-image-name-updates: 'container=${MY_APP_PREFIX}-service,tag=${CIRCLE_SHA1}'
-      - run:
-          name: Building apps from list to ECR
-          command: |
-            echo "------------------------------------------------------"
-            echo -e "Building apps from list to ECR"
-            echo -e "Changed applications : ${changedapps}"
 
   # build:
   #   working_directory: ~/repo
