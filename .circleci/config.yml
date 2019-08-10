@@ -198,18 +198,7 @@ jobs:
   #           - node_modules
   #         key: v1-dependencies-{{ checksum "package.json" }}
 # TODO Implement all the steps which we have in Jenkins plus approval step and slack notifications
-# We can use it to run nightly builds for master branch - now we update prod every morning, should we do the same or use approval step as well or as alternative?
-# cron chould be edit in accordance with the AWS scheduling
-    # nightly:
-    #    triggers:
-    #        - schedule:
-    #            cron: "0 22 * * *"
-    #            filters:
-    #                branches:
-    #                    only:
-    #                        - master
-#
-# Documentation page for workflows: https://circleci.com/docs/2.0/configuration-reference/#workflows
+
 workflows:
   version: 2
   detect-and-persist:
@@ -233,7 +222,20 @@ workflows:
               only: /master/
           # On approval of the `hold` job, any successive job that requires the `hold` job will run. 
           # In this case, a user is manually triggering the deploy job.
-      - deploy:
-          requires:
-            - hold
+      # - deploy:
+      #     requires:
+      #       - hold
+
+# We can use it to run nightly builds for master branch - now we update prod every morning, should we do the same or use approval step as well or as alternative?
+# cron chould be edit in accordance with the AWS scheduling
+    # nightly:
+    #    triggers:
+    #        - schedule:
+    #            cron: "0 22 * * *"
+    #            filters:
+    #                branches:
+    #                    only:
+    #                        - master
+#
+# Documentation page for workflows: https://circleci.com/docs/2.0/configuration-reference/#workflows
 
