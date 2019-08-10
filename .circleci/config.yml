@@ -218,8 +218,8 @@ jobs:
   build-and-push:
     executor: executor1
     working_directory: ~/tmp
-    - checkout # TODO try to skip it because checked out at the build step
     steps:
+      - checkout # TODO try to skip it because checked out at the build step
       - attach_workspace:
           at: ~/tmp/workspace
       - run:
