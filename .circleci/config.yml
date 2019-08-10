@@ -219,7 +219,7 @@ jobs:
     executor: executor1
     working_directory: ~/tmp
     steps:
-      - checkout # TODO try to skip it because checked out at the build step
+      - checkout # TODO try to skip it because checked out at the build step. Or share node_modules via workspace
       - attach_workspace:
           at: ~/tmp/workspace
       - setup_remote_docker:
@@ -305,9 +305,25 @@ workflows:
       - build-and-push:
           requires:
             - test
+          filters:
+            branches:
+              only: /master/
       # - deploy:
       #     requires:
       #       - hold
+
+  detect-and-test:
+    jobs:
+      - detect:
+          filters:
+            branches:
+              ignore: /master/
+      - test:
+          requires: # test will not run until the `build` job is completed.
+            - detect
+          filters:
+            branches:
+              ignore: /master/
 
 # We can use it to run nightly builds for master branch - now we update prod every morning, should we do the same or use approval step as well or as alternative?
 # cron chould be edit in accordance with the AWS scheduling
