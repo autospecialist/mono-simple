@@ -150,7 +150,7 @@ jobs:
 
             echo "Changed applications : ${changedapps}"
 
-            if ((${changedapps} -eq 0)); then
+            if [[${changedapps} -eq 0]]; then
               echo -e "We should test and build apps: ${changedapps}"
             else
               echo -e "We should not build any app, only LICENSE or README changed"
