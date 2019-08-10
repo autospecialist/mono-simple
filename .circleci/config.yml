@@ -181,9 +181,9 @@ jobs:
     executor: executor1
     working_directory: ~/tmp
     steps:
+      - checkout # trying to skip it because checked out at the build step
       - attach_workspace:
           at: ~/tmp/workspace
-      - checkout # trying to skip it because checked out at the build step
       - run:
           name: Installing dependencies
           command: yarn install
