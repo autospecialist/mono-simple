@@ -106,7 +106,21 @@ jobs:
               echo "Skipping check step for CORE, because COMMON files changed "
             fi
 
-            # if no files changed in CORE and COMMON, check apps
+            # if no files changed in CORE and COMMON, check root files and .circleci
+
+
+            if [[ ${forceallbuilds} != 0 ]]; then # else, all builds are already forced
+              changed_root_files=()
+              echo "Probably, root files (or /.circleci/) changed, check them all"
+              # Exclude README and LICENSE, maybe more
+              changed_root_files=`git diff $COMMIT_RANGE --name-only | grep -v -e README -e LICENSE || : | awk '{print $1}'` # can't use '.' as FS because .* files
+              if ((${changed_root_files})) then
+                echo "changed_root_files= ${changed_root_files}"
+                forceallbuilds=0
+              else
+                echo "No files changed in the root / .circleci, check apps directory "
+              fi
+            fi
             
             changedapps=()
 
@@ -133,19 +147,9 @@ jobs:
               done
             fi
 
-            # List of changed apps generated, butin cas of no files changed in COMMON / CORE / APPS, it is empty
+            # List of changed apps generated, but in case of no files changed in COMMON / CORE / APPS, it is empty
             # Check the rootfiles
-            
-            if (( ${changedapps})); then
-              echo "Changedapps array is not empty"
-            else
-              changed_root_files=()
-              echo "Root files (or /.circleci/) changed, check them all"
-              # Exclude README and LICENSE, maybe more
-              changed_root_files=`git diff $COMMIT_RANGE --name-only | grep -v -e README -e LICENSE || : | awk '{print $1}'` # can't use '.' as FS because .* files
 
-              echo "changed_root_files= ${changed_root_files}"
-            fi
 
   # build:
   #   working_directory: ~/repo
