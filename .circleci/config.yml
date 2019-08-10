@@ -114,7 +114,7 @@ jobs:
               echo "Probably, root files (or /.circleci/) changed, check them all"
               # Exclude README and LICENSE, maybe more
               changed_root_files=`git diff $COMMIT_RANGE --name-only | grep -v -e README -e LICENSE || : | awk '{print $1}'` # can't use '.' as FS because .* files
-              if ((${changed_root_files})) then
+              if ((${changed_root_files})); then
                 echo "changed_root_files= ${changed_root_files}"
                 forceallbuilds=0
               else
@@ -140,15 +140,18 @@ jobs:
                 done
                   echo "Changed applications : ${changedapps}"
             else
-              echo "Skipping check step for APPS, because COMMON or CORE files changed "
+              echo "Skipping check step for APPS, because COMMON or CORE or root files changed "
               # TODO refactoring, DRY ?
               for APP in apps/*/; do
                   changedapps+=" ${appname}"
               done
             fi
 
-            # List of changed apps generated, but in case of no files changed in COMMON / CORE / APPS, it is empty
-            # Check the rootfiles
+            # List of changed apps generated.
+            # Contains all the apps if /common/ | /core/ | root changed,
+            # or only names of changed packages in the /apps/
+
+            # Double - check if not empty before running tests
 
 
   # build:
