@@ -208,6 +208,7 @@ jobs:
                 cd ..
             done
                   # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
+            mkdir repo
       - persist_to_workspace:
           root: repo
           # Must be relative path from root
