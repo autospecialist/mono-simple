@@ -168,8 +168,6 @@ jobs:
           # taken to be the root directory of the workspace.
           root: workspace
           # Must be relative path from root
-          paths:
-          - changedapps
 
       # List of changed apps generated.
       # Contains all the apps if /common/ | /core/ | root changed,
@@ -207,12 +205,21 @@ jobs:
                 yarn test
                 cd ..
             done
+        - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          # taken to be the root directory of the workspace.
+          root: repo
+          # Must be relative path from root
+          paths:
+          - ./
 
   build-and-push:
     executor: executor1
     steps:
       - attach_workspace:
           at: ~/tmp/workspace
+      - attach_workspace:
+          at: ~/tmp/repo
       - run:
           name: Building apps from list to ECR
           command: |
@@ -220,6 +227,16 @@ jobs:
             echo -e "Trying to get list of applications generated via previous job"
             changedapps=`cat ~/tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
+
+            # Iterate on each service and run the packaging script
+            for app in $changedapps
+            do
+                echo "-------------------Running tests for $app---------------------"
+
+                cd $app
+                yarn test
+                cd ..
+            done
       # - aws-ecr/build_and_push_image:
       #     account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
       #     repo: '${MY_APP_PREFIX}'
