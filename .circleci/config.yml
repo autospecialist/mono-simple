@@ -178,7 +178,7 @@ jobs:
       # Double - check if not empty before running tests
     
   test:
-    # executor: executor1
+    executor: executor1
     working_directory: ~/tmp
     steps:
       - attach_workspace:
