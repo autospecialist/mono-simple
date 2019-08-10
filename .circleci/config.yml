@@ -144,7 +144,8 @@ jobs:
               echo "Skipping check step for APPS, because COMMON or CORE or root files changed "
               # TODO refactoring, DRY ?
               for APP in apps/*/; do
-                  changedapps+=" ${appname}"
+                appname=$(basename $APP)
+                changedapps+=" ${appname}"
               done
             fi
 
