@@ -162,12 +162,12 @@ jobs:
               circleci step halt
               exit 0
             fi
-      # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
-          # taken to be the root directory of the workspace.
-          root: workspace
-          # Must be relative path from root
+    # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
+    - persist_to_workspace:
+        # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+        # taken to be the root directory of the workspace.
+        root: workspace
+        # Must be relative path from root
 
       # List of changed apps generated.
       # Contains all the apps if /common/ | /core/ | root changed,
