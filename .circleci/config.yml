@@ -7,8 +7,9 @@ version: 2.1
 orbs:
   slack: circleci/slack@3.3.0
   circle-compare-url: iynere/compare-url@1.1.0
-  aws-ecr: circleci/aws-ecr@0.0.4
-  aws-ecs: circleci/aws-ecs@0.0.3
+  # aws-ecr: circleci/aws-ecr@0.0.4
+  # aws-ecs: circleci/aws-ecs@0.0.3
+  # unable to use aws orbs because app-specific builds
 
 # Note: CircleCI occasionally makes scheduled changes to images to fix bugs or otherwise improve functionality, 
 # and these changes can sometimes cause affect how images work in CircleCI jobs. 
@@ -208,9 +209,8 @@ jobs:
                 cd ..
             done
                   # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
-            mkdir repo
       - persist_to_workspace:
-          root: repo
+          root: workspace/repo
           # Must be relative path from root
           paths:
           - ./
@@ -219,13 +219,13 @@ jobs:
     executor: executor1
     steps:
       - attach_workspace:
-          at: ~/tmp/repo
+          at: ~/tmp/workspace
       - run:
           name: Building apps from list to ECR
           command: |
             echo "------------------------------------------------------"
             echo -e "Trying to get list of applications generated via previous job"
-            changedapps=`cat ~/tmp/repo/workspace/changedapps`
+            changedapps=`cat ~/tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
 
             # Iterate on each service and run the packaging script
