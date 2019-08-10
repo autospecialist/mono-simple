@@ -195,7 +195,8 @@ jobs:
             changedapps=`cat ~/tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
             ls
-            cd ~/apps
+            cd workspace
+            ls
 
             # Iterate on each service and run the packaging script
             for app in $changedapps
