@@ -182,9 +182,8 @@ jobs:
     working_directory: ~/tmp
     steps:
       - attach_workspace:
-        # Must be absolute path or relative path from working_directory
-        at: /tmp/workspace
-      - checkout # trying to skip it because checked out at the build step
+          at: /tmp/workspace
+      # - checkout # trying to skip it because checked out at the build step
       - run:
           name: Installing dependencies
           command: yarn install
@@ -202,7 +201,7 @@ jobs:
                 echo "-------------------Running tests for $app---------------------"
                 yarn workspace $app test
             done
-    
+
   build-and-push:
     executor: executor1
     steps:
