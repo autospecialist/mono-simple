@@ -207,24 +207,31 @@ jobs:
                 yarn test
                 cd ..
             done
+                  # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
+      - persist_to_workspace:
+          root: repo
+          # Must be relative path from root
+          paths:
+          - ./
 
   build-and-push:
     executor: executor1
     steps:
       - attach_workspace:
-          at: ~/tmp/workspace
+          at: ~/tmp/repo
       - run:
           name: Building apps from list to ECR
           command: |
             echo "------------------------------------------------------"
             echo -e "Trying to get list of applications generated via previous job"
-            changedapps=`cat ~/tmp/workspace/changedapps`
+            changedapps=`cat ~/tmp/repo/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
 
             # Iterate on each service and run the packaging script
             for app in $changedapps
             do
-                echo "-------------------Running tests for $app---------------------"
+                echo "-------------------Running build for $app---------------------"
+                ls
 
                 cd $app
                 yarn test
