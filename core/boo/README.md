@@ -3,6 +3,6 @@
 ## Usage
 
 ```
-Lorem ipsum
+Lorem ipsum dolor
 
 ```
