@@ -182,7 +182,7 @@ jobs:
     executor: executor1
     working_directory: ~/tmp
     steps:
-      - checkout # trying to skip it because checked out at the build step
+      - checkout # TODO try to skip it because checked out at the build step
       - attach_workspace:
           at: ~/tmp/workspace
       - run:
@@ -218,9 +218,13 @@ jobs:
   build-and-push:
     executor: executor1
     working_directory: ~/tmp
+    - checkout # TODO try to skip it because checked out at the build step
     steps:
       - attach_workspace:
           at: ~/tmp/workspace
+      - run:
+          name: Installing dependencies
+          command: yarn install
       - run:
           name: Building apps from list to ECR
           command: |
@@ -228,18 +232,16 @@ jobs:
             echo -e "Trying to get list of applications generated via previous job"
             changedapps=`cat ~/tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
-
-            cd workspace
-
-            # Iterate on each service and run the packaging script
+            # Iterate on each service and run the build
+            ACCOUNT_NAME='316425403378.dkr.ecr.eu-west-1.amazonaws.com'
             for app in $changedapps
             do
-                echo "-------------------Running build for $app---------------------"
-                ls
+                echo "-------------------Running build for $app ---------------------"
 
-                cd $app
-                yarn test
-                cd ..
+                echo "building image $app"
+                sudo docker build -t $ACCOUNT_NAME/$1:$BRANCH.$SHIPPABLE_BUILD_NUMBER -f apps/$1/Dockerfile .
+                echo "pushing image $app"
+                sudo docker push $ACCOUNT_NAME/$1:$BRANCH.$SHIPPABLE_BUILD_NUMBER
             done
       # - aws-ecr/build_and_push_image:
       #     account-url: '${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com'
