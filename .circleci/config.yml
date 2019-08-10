@@ -155,15 +155,6 @@ jobs:
             mkdir -p workspace
             echo ${changedapps} > workspace/changedapps
 
-            # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
-        - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
-          # taken to be the root directory of the workspace.
-          root: workspace
-          # Must be relative path from root
-          paths:
-            - changedapps
-
             if [[ ${changedapps} ]]; then
               echo -e "We should test and build apps: ${changedapps}"
             else
@@ -171,12 +162,20 @@ jobs:
               circleci step halt
               exit 0
             fi
+      # Persist the specified paths (workspace/changedapps) into the workspace for use in test / build-and-push & deploy jobs. 
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
+          # taken to be the root directory of the workspace.
+        root: workspace
+        # Must be relative path from root
+        paths:
+          - changedapps
 
-            # List of changed apps generated.
-            # Contains all the apps if /common/ | /core/ | root changed,
-            # or only names of changed packages in the /apps/
+      # List of changed apps generated.
+      # Contains all the apps if /common/ | /core/ | root changed,
+      # or only names of changed packages in the /apps/
 
-            # Double - check if not empty before running tests
+      # Double - check if not empty before running tests
     
   test:
     executor: executor1
