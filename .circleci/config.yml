@@ -139,7 +139,6 @@ jobs:
                   fi
                   echo "------------------------------------------------------"
                 done
-                  echo "Changed applications : ${changedapps}"
             else
               echo "Skipping check step for APPS, because COMMON or CORE or root files changed "
               # TODO refactoring, DRY ?
@@ -149,7 +148,15 @@ jobs:
               done
             fi
 
-            echo -e "changedapps= ${changedapps}"
+            echo "Changed applications : ${changedapps}"
+
+            if [[${changedapps}]]; then
+              echo -e "We should test and build apps: ${changedapps}"
+            else
+              echo -e "We should not build any app, only LICENSE or README changed"
+            fi
+
+
             # List of changed apps generated.
             # Contains all the apps if /common/ | /core/ | root changed,
             # or only names of changed packages in the /apps/
