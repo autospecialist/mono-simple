@@ -218,6 +218,12 @@ workflows:
           filters:
             branches:
               only: /master/
+      - test:
+          requires: # test will not run until the `build` job is completed.
+            - build
+            filters:
+            branches:
+              only: /master/
 
       # - hold:
       #     type: approval
