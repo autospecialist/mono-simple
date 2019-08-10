@@ -206,24 +206,22 @@ jobs:
                 cd ..
             done
       - persist_to_workspace:
-        # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is 
-        # taken to be the root directory of the workspace.
-        root: repo
-        # Must be relative path from root
-        paths:
-        - ./
+          root: repo
+          # Must be relative path from root
+          paths:
+          - ./
 
   build-and-push:
     executor: executor1
     steps:
       - attach_workspace:
-          at: ~/tmp/repo
+          at: ~/tmp/workspace
       - run:
           name: Building apps from list to ECR
           command: |
             echo "------------------------------------------------------"
             echo -e "Trying to get list of applications generated via previous job"
-            changedapps=`cat ~/tmp/repo/workspace/changedapps`
+            changedapps=`cat ~/tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
 
             # Iterate on each service and run the packaging script
