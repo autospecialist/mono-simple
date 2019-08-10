@@ -202,9 +202,9 @@ jobs:
             do
                 echo "-------------------Running tests for $app---------------------"
                 
-                cd $app
+                # cd $app
                 yarn test
-                cd ..
+                # cd ..
             done
 
   build-and-push:
