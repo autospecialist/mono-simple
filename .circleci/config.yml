@@ -149,7 +149,7 @@ jobs:
               done
             fi
 
-            echo -e "changedapps= ${appname}"
+            echo -e "changedapps= ${changedapps}"
             # List of changed apps generated.
             # Contains all the apps if /common/ | /core/ | root changed,
             # or only names of changed packages in the /apps/
