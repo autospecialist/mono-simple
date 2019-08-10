@@ -182,7 +182,7 @@ jobs:
     working_directory: ~/tmp
     steps:
       - attach_workspace:
-          at: ~/tmp/workspace
+        at: ~/tmp/workspace
       - checkout # trying to skip it because checked out at the build step
       - run:
           name: Installing dependencies
