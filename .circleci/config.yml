@@ -213,7 +213,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/tmp/workspace
-          - run:
+      - run:
           name: Building apps from list to ECR
           command: |
             echo "------------------------------------------------------"
