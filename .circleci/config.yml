@@ -142,7 +142,7 @@ jobs:
               changed_root_files=()
               echo "Root files (or /.circleci/) changed, check them all"
               # Exclude README and LICENSE, maybe more
-              changed_root_files=`git diff $COMMIT_RANGE --name-only | grep -v -e README -e LICENSE | awk '{print $1}'` # can't use '.' as FS because .* files
+              changed_root_files=`git diff $COMMIT_RANGE --name-only | grep -v -e README -e LICENSE || "" | awk '{print $1}'` # can't use '.' as FS because .* files
 
               echo "changed_root_files= ${changed_root_files}"
             fi
