@@ -110,12 +110,13 @@ jobs:
 
 
             if [[ ${forceallbuilds} != 0 ]]; then # else, all builds are already forced
-              changed_root_files=()
+              # changed_root_files=()
               echo "Probably, root files (or /.circleci/) changed, check them all"
               # Exclude README and LICENSE, maybe more
-              changed_root_files=`git diff $COMMIT_RANGE --name-only | grep -v -e README -e LICENSE || : | awk '{print $1}'` # can't use '.' as FS because .* files
-              if ((${changed_root_files})); then
-                echo "changed_root_files= ${changed_root_files}"
+              # changed_root_files=`git diff $COMMIT_RANGE --name-only | grep -v -e README -e LICENSE || : | awk '{print $1}'` # can't use '.' as FS because .* files
+              # if ((${changed_root_files})); then
+              if [[ $(git diff $COMMIT_RANGE --name-only | grep -v -e README -e LICENSE) ]]; then
+                echo "Root files was changed"
                 forceallbuilds=0
               else
                 echo "No files changed in the root / .circleci, check apps directory "
