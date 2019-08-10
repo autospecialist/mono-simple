@@ -7,6 +7,8 @@ version: 2.1
 orbs:
   slack: circleci/slack@3.3.0
   circle-compare-url: iynere/compare-url@1.1.0
+  aws-ecr: circleci/aws-ecr@0.0.4
+  aws-ecs: circleci/aws-ecs@0.0.3
 
 # Note: CircleCI occasionally makes scheduled changes to images to fix bugs or otherwise improve functionality, 
 # and these changes can sometimes cause affect how images work in CircleCI jobs. 
@@ -175,6 +177,16 @@ jobs:
             echo "------------------------------------------------------"
             echo -e "Trying to get list of applications generated via previous job"
             echo -e "Changed applications : ${changedapps}"
+    
+  build-and-push:
+    executor: executor1
+    steps:
+      - run:
+          name: Building apps from list to ECR
+          command: |
+            echo "------------------------------------------------------"
+            echo -e "Building apps from list to ECR"
+            echo -e "Changed applications : ${changedapps}"
 
   # build:
   #   working_directory: ~/repo
@@ -221,7 +233,10 @@ workflows:
             branches:
               only: /master/
           # On approval of the `hold` job, any successive job that requires the `hold` job will run. 
-          # In this case, a user is manually triggering the deploy job.
+          #    In this case, a user is manually triggering the   build-and-push job.
+      -  build-and-push:
+          requires:
+            - hold
       # - deploy:
       #     requires:
       #       - hold
