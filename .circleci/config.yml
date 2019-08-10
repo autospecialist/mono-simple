@@ -48,7 +48,7 @@ executors:
 jobs:
   detect:
     executor: executor1
-    working_directory: /tmp
+    working_directory: ~/tmp
     steps:
       - checkout
       - circle-compare-url/reconstruct
@@ -179,7 +179,7 @@ jobs:
     
   test:
     executor: executor1
-    working_directory: /tmp
+    working_directory: ~/tmp
     steps:
       # - attach_workspace:
       #   # Must be absolute path or relative path from working_directory
