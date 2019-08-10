@@ -148,7 +148,7 @@ jobs:
               done
             fi
 
-            echo "Changed applications : ${changedapps}"
+            echo -e "Changed applications : ${changedapps}"
 
             if [[${changedapps} -eq 0]]; then
               echo -e "We should test and build apps: ${changedapps}"
