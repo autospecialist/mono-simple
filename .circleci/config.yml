@@ -178,20 +178,30 @@ jobs:
       # Double - check if not empty before running tests
     
   test:
-    executor: executor1
+    # executor: executor1
     working_directory: ~/tmp
     steps:
-      # - attach_workspace:
-      #   # Must be absolute path or relative path from working_directory
-      #   at: /tmp/workspace
-      # - checkout # trying to skip it because checked out at the build step
+      - attach_workspace:
+        # Must be absolute path or relative path from working_directory
+        at: /tmp/workspace
+      - checkout # trying to skip it because checked out at the build step
+      - run:
+          name: Installing dependencies
+          command: yarn install
       - run:
           name: Testing only applications from application list
           command: |
             echo "------------------------------------------------------"
             echo -e "Trying to get list of applications generated via previous job"
-            changedapps = `cat /tmp/workspace/changedapps`
+            changedapps=`cat /tmp/workspace/changedapps`
             echo -e "Changed applications : ${changedapps}"
+
+            # Iterate on each service and run the packaging script
+            for app in $changedapps
+            do
+                echo "-------------------Running tests for $app---------------------"
+                yarn workspace $app test
+            done
     
   build-and-push:
     executor: executor1
